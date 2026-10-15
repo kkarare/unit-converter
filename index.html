@@ -2,7 +2,8 @@
 <html lang="ko" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <!-- 모바일 화면 꽉 채우기 및 배율 고정 뷰포트 설정 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -535,6 +536,27 @@
             text-overflow: ellipsis;
         }
         #toast.show { opacity: 1; transform: translate(-50%, 0); }
+    </style>
+    <!-- 스마트폰 화면에서 바깥 여백과 가상 테두리를 없애고 100% 꽉 채우기 -->
+    <style>
+      @media (max-width: 768px) {
+        html, body {
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          overflow-x: hidden !important;
+        }
+        body > div, #app, main, .app-container, .phone-frame {
+          max-width: 100% !important;
+          width: 100% !important;
+          min-height: 100dvh !important;
+          margin: 0 !important;
+          border-radius: 0 !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+      }
     </style>
 </head>
 <body>
