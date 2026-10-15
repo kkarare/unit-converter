@@ -7,7 +7,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" id="themeColor" content="#000000">
+    <!-- PWA 매니페스트 및 테마 색상 연결 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" id="themeColor" content="#0f172a">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <title>SI · US 단위 변환</title>
     <script>
         try {
@@ -1477,6 +1480,17 @@
         }
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
         else boot();
+    </script>
+
+    <!-- 서비스 워커(오프라인 지원) 등록 스크립트 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker 등록 성공:', reg.scope))
+                    .catch(err => console.log('Service Worker 등록 실패:', err));
+            });
+        }
     </script>
 </body>
 </html>

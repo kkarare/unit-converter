@@ -1,0 +1,25 @@
+{
+  "name": "SI-US 엔지니어링 단위변환기",
+  "short_name": "단위변환기",
+  "description": "엔지니어링 및 현장 검수용 SI-US 양방향 단위변환기",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
