@@ -2,22 +2,25 @@
 <html lang="ko" class="dark">
 <head>
     <meta charset="UTF-8">
-    <!-- 모바일 화면 꽉 채우기 및 배율 고정 뷰포트 설정 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
     <!-- PWA 매니페스트 및 테마 색상 연결 -->
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" id="themeColor" content="#0f172a">
+    <meta name="theme-color" id="themeColor" content="#000000">
+    <link rel="icon" href="./icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="./icon-192.png">
     <title>SI · US 단위 변환</title>
     <script>
         try {
+            const theme = document.getElementById('themeColor');
             if (localStorage.getItem('eng_unit_theme_v1') === 'light') {
                 document.documentElement.classList.remove('dark');
-                document.getElementById('themeColor').setAttribute('content', '#f5f5f7');
+                theme.setAttribute('content', '#f5f5f7');
+            } else {
+                theme.setAttribute('content', '#000000');
             }
         } catch (e) {}
     </script>
@@ -32,10 +35,14 @@
             --fill: #ececf1;
             --line: #e4e4e9;
             --blue: #2563eb;
-            --blue-soft: rgba(37, 99, 235, 0.1);
+            --blue-soft: rgba(37, 99, 235, 0.12);
+            --accent: #2563eb;
             --us: #b45309;
             --amber: #d97706;
-            --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.04);
+            --seg: #ffffff;
+            --grab: #c7c7cc;
+            --dock: rgba(245, 245, 247, 0.9);
         }
         html.dark {
             color-scheme: dark;
@@ -45,12 +52,16 @@
             --muted: #a1a1aa;
             --faint: #8e8e93;
             --fill: #2c2c2e;
-            --line: #2c2c2e;
+            --line: #3a3a3c;
             --blue: #60a5fa;
-            --blue-soft: rgba(96, 165, 250, 0.14);
+            --blue-soft: rgba(96, 165, 250, 0.16);
+            --accent: #2563eb;
             --us: #fbbf24;
             --amber: #fbbf24;
             --shadow: none;
+            --seg: #3a3a3c;
+            --grab: #636366;
+            --dock: rgba(0, 0, 0, 0.92);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body {
@@ -67,7 +78,7 @@
             justify-content: center;
             overscroll-behavior: none;
         }
-        button, input, select { font: inherit; color: inherit; }
+        button, input, select { font: inherit; color: inherit; touch-action: manipulation; }
         button { cursor: pointer; }
         button:active { transform: scale(0.97); }
         button:focus-visible, select:focus-visible {
@@ -89,8 +100,8 @@
             background: var(--bg);
         }
         @media (min-width: 760px) {
-            body { align-items: center; background: #e7e7ec; }
-            html.dark body { background: #0a0a0a; }
+            body { align-items: center; background: #e8e8ed; }
+            html.dark body { background: #000000; }
             .app {
                 height: min(900px, calc(100dvh - 40px));
                 border-radius: 24px;
@@ -106,14 +117,14 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            padding: calc(8px + env(safe-area-inset-top)) 12px 8px 16px;
+            padding: calc(10px + env(safe-area-inset-top)) 12px 8px 16px;
         }
         .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
         .brand-mark {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 10px;
-            background: #2563eb;
+            background: var(--accent);
             color: #fff;
             display: grid;
             place-items: center;
@@ -124,7 +135,7 @@
         }
         h1 {
             margin: 0;
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             letter-spacing: -0.03em;
         }
@@ -136,10 +147,10 @@
             overflow: auto;
             overscroll-behavior: contain;
             scrollbar-width: none;
-            padding: 4px 16px 28px;
+            padding: 4px 16px 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
         .main > * { flex-shrink: 0; }
         .main::-webkit-scrollbar { display: none; }
@@ -168,8 +179,8 @@
         }
         .icon-hit {
             position: relative;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             color: var(--muted);
         }
@@ -181,7 +192,7 @@
             height: 16px;
             padding: 0 4px;
             border-radius: 99px;
-            background: #2563eb;
+            background: var(--accent);
             color: #fff;
             font-size: 10px;
             font-weight: 700;
@@ -193,27 +204,28 @@
         .cat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
+            gap: 8px;
         }
         .cat-btn {
-            min-height: 62px;
+            min-height: 58px;
             border: 0;
-            border-radius: 14px;
-            background: transparent;
+            border-radius: 16px;
+            background: color-mix(in srgb, var(--fill) 72%, transparent);
             color: var(--muted);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            font-size: 12px;
+            gap: 5px;
+            font-size: 13px;
             font-weight: 600;
             letter-spacing: -0.03em;
         }
+        .cat-btn .ico { width: 22px; height: 22px; }
         .cat-btn[data-active="true"] {
-            background: var(--card);
+            background: var(--blue-soft);
             color: var(--blue);
-            box-shadow: var(--shadow), 0 0 0 1px var(--line);
+            box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--blue) 55%, transparent);
         }
 
         .preset-row {
@@ -226,14 +238,14 @@
         .preset-row::-webkit-scrollbar { display: none; }
         .preset-btn {
             flex: none;
-            height: 34px;
-            padding: 0 12px;
+            height: 36px;
+            padding: 0 14px;
             border: 0;
             border-radius: 999px;
-            background: transparent;
+            background: color-mix(in srgb, var(--fill) 80%, transparent);
             color: var(--muted);
             font-size: 13px;
-            font-weight: 650;
+            font-weight: 600;
             font-variant-numeric: tabular-nums;
         }
         .preset-btn[data-active="true"] {
@@ -241,12 +253,12 @@
             color: var(--blue);
         }
 
-        .converter { display: flex; flex-direction: column; gap: 8px; }
+        .converter { display: flex; flex-direction: column; gap: 6px; }
         .card {
             background: var(--card);
             border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 12px 14px 12px;
+            border-radius: 20px;
+            padding: 12px 16px 14px;
             box-shadow: var(--shadow);
         }
         .card[data-active="true"] { border-color: var(--blue); }
@@ -272,9 +284,10 @@
             background: transparent;
             color: var(--muted);
             font-size: 13px;
-            font-weight: 650;
-            padding: 6px 8px;
-            border-radius: 8px;
+            font-weight: 600;
+            min-height: 44px;
+            padding: 8px 10px;
+            border-radius: 10px;
         }
         .num-row {
             display: flex;
@@ -290,8 +303,8 @@
             background: transparent;
             padding: 0;
             font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-            font-size: clamp(28px, 9vw, 36px);
-            font-weight: 620;
+            font-size: clamp(30px, 8.6vw, 36px);
+            font-weight: 600;
             letter-spacing: -0.045em;
             font-variant-numeric: tabular-nums;
             line-height: 1.15;
@@ -311,7 +324,7 @@
         }
         .unit-select {
             width: 100%;
-            margin-top: 10px;
+            margin-top: 8px;
             height: 44px;
             border: 0;
             border-radius: 12px;
@@ -329,7 +342,7 @@
 
         .swap-row { display: flex; justify-content: center; gap: 8px; }
         .swap-btn, .ghost-btn { width: 44px; height: 44px; border-radius: 999px; }
-        .swap-btn { background: #2563eb; color: #fff; }
+        .swap-btn { background: var(--accent); color: #fff; }
         .ghost-btn { background: var(--card); color: var(--muted); border: 1px solid var(--line); }
         .ghost-btn[aria-pressed="true"] {
             color: var(--amber);
@@ -339,14 +352,15 @@
         .ghost-btn[aria-pressed="true"] svg { fill: currentColor; }
         #swapIcon { transition: transform 0.25s ease; }
 
-        .tools { display: flex; flex-direction: column; gap: 10px; padding: 0 2px; }
+        .tools { display: flex; flex-direction: column; gap: 8px; padding: 0 2px; }
         .formula-top { align-items: flex-start; }
         #formulaText, #reverseFormulaText {
             margin: 0;
             font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
             font-size: 12.5px;
-            font-weight: 620;
+            font-weight: 600;
             letter-spacing: -0.02em;
+            line-height: 1.45;
             word-break: break-all;
         }
         #reverseFormulaText { margin-top: 3px; color: var(--muted); font-weight: 500; }
@@ -359,31 +373,31 @@
         }
         .prec-btn, .filter-btn {
             flex: 1;
-            height: 32px;
+            height: 36px;
             border: 0;
             border-radius: 9px;
             background: transparent;
             color: var(--muted);
-            font-size: 12px;
-            font-weight: 680;
+            font-size: 13px;
+            font-weight: 600;
             white-space: nowrap;
         }
         .prec-btn[aria-pressed="true"],
         .filter-btn[aria-pressed="true"] {
-            background: var(--card);
+            background: var(--seg);
             color: var(--blue);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
         }
 
         .panel {
             background: var(--card);
             border: 1px solid var(--line);
-            border-radius: 18px;
+            border-radius: 20px;
             box-shadow: var(--shadow);
             overflow: hidden;
         }
         .panel-head { padding: 14px 14px 8px; align-items: baseline; }
-        .panel-head h2 { margin: 0; font-size: 13px; font-weight: 720; letter-spacing: -0.02em; }
+        .panel-head h2 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
         #overviewBaseLabel {
             font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
             font-size: 12px;
@@ -409,7 +423,8 @@
             border: 0;
             background: transparent;
             text-align: left;
-            padding: 10px 0;
+            padding: 12px 0;
+            min-height: 48px;
         }
         .unit-name { min-width: 0; display: flex; flex-direction: column; }
         .unit-name b {
@@ -444,13 +459,13 @@
             gap: 6px;
             padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
             border-top: 1px solid var(--line);
-            background: color-mix(in srgb, var(--bg) 88%, transparent);
+            background: var(--dock);
             backdrop-filter: blur(16px);
         }
         .dock button {
-            height: 42px;
+            height: 48px;
             border: 0;
-            border-radius: 12px;
+            border-radius: 14px;
             background: var(--fill);
             color: var(--text);
             font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -471,21 +486,23 @@
         #savedDrawer[hidden] { display: none !important; }
         .sheet {
             background: var(--bg);
-            border-radius: 20px 20px 0 0;
+            border-radius: 24px 24px 0 0;
             max-height: 82%;
             display: flex;
             flex-direction: column;
             padding-bottom: env(safe-area-inset-bottom);
+            border-top: 1px solid var(--line);
+            box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.28);
         }
         .grabber {
-            width: 36px;
-            height: 4px;
+            width: 40px;
+            height: 5px;
             border-radius: 99px;
-            background: var(--line);
-            margin: 8px auto 0;
+            background: var(--grab);
+            margin: 10px auto 2px;
         }
-        .sheet-head { padding: 12px 8px 12px 18px; }
-        .sheet-head h2 { margin: 0; font-size: 16px; font-weight: 730; }
+        .sheet-head { padding: 8px 8px 8px 18px; }
+        .sheet-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
         .sheet-body { overflow: auto; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 18px; }
         .sheet-body h3 {
             margin: 0 0 8px;
@@ -537,27 +554,6 @@
         }
         #toast.show { opacity: 1; transform: translate(-50%, 0); }
     </style>
-    <!-- 스마트폰 화면에서 바깥 여백과 가상 테두리를 없애고 100% 꽉 채우기 -->
-    <style>
-      @media (max-width: 768px) {
-        html, body {
-          margin: 0 !important;
-          padding: 0 !important;
-          width: 100% !important;
-          height: 100% !important;
-          overflow-x: hidden !important;
-        }
-        body > div, #app, main, .app-container, .phone-frame {
-          max-width: 100% !important;
-          width: 100% !important;
-          min-height: 100dvh !important;
-          margin: 0 !important;
-          border-radius: 0 !important;
-          border: none !important;
-          box-shadow: none !important;
-        }
-      }
-    </style>
 </head>
 <body>
     <div class="app" id="app">
@@ -598,7 +594,7 @@
                         </div>
                     </div>
                     <div class="num-row">
-                        <input id="inputTop" class="num-input" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="0" value="1" oninput="handleInput('top', this.value)" onfocus="setActiveInput('top')" aria-label="기준 값">
+                        <input id="inputTop" class="num-input" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="0" value="1" oninput="handleInput('top', this.value, event)" onfocus="setActiveInput('top')" aria-label="기준 값">
                         <span id="topSymbol" class="num-unit">mm</span>
                     </div>
                     <select id="selectTop" class="unit-select" onchange="handleUnitChange('top')" aria-label="위쪽 단위"></select>
@@ -627,7 +623,7 @@
                         </div>
                     </div>
                     <div class="num-row">
-                        <input id="inputBottom" class="num-input is-result" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="0" oninput="handleInput('bottom', this.value)" onfocus="setActiveInput('bottom')" aria-label="변환 값">
+                        <input id="inputBottom" class="num-input is-result" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="0" oninput="handleInput('bottom', this.value, event)" onfocus="setActiveInput('bottom')" aria-label="변환 값">
                         <span id="bottomSymbol" class="num-unit">in</span>
                     </div>
                     <select id="selectBottom" class="unit-select" onchange="handleUnitChange('bottom')" aria-label="아래쪽 단위"></select>
@@ -819,7 +815,7 @@
                     { id: 'psi', symbol: 'psi', name: '파운드/제곱인치', sys: 'US', factor: 6894.757293168361 },
                     { id: 'Msi', symbol: 'Msi', name: '메가파운드/제곱인치', sys: 'US', factor: 6894757293.168361 },
                     { id: 'psf', symbol: 'psf', name: '파운드/제곱피트', sys: 'US', factor: 47.88025898033584 },
-                    { id: 'inHg', symbol: 'inHg', name: '인치 수은주', sys: 'US', factor: 3386.3886666667 }
+                    { id: 'inHg', symbol: 'inHg', name: '인치 수은주', sys: 'US', factor: 25.4 * 133.322387415 }
                 ]
             },
             {
@@ -909,7 +905,7 @@
                     { id: 'Pam3s', symbol: 'Pa·m³/s', name: '파스칼 세제곱미터/초', sys: 'SI', factor: 1 },
                     { id: 'mbarLs', symbol: 'mbar·L/s', name: '밀리바 리터/초', sys: 'SI', factor: 0.1 },
                     { id: 'atmccs', symbol: 'atm·cc/s', name: '기압 세제곱센티미터/초', sys: 'US', factor: 0.101325 },
-                    { id: 'TorrLs', symbol: 'Torr·L/s', name: '토르 리터/초', sys: 'US', factor: 0.133322387415 }
+                    { id: 'TorrLs', symbol: 'Torr·L/s', name: '토르 리터/초', sys: 'US', factor: 101325 / 760 / 1000 }
                 ]
             }
         ];
@@ -935,21 +931,39 @@
             }[ch]));
         }
 
+        const DEFAULT_FAVORITES = [
+            { categoryId: 'pressure', from: 'MPa', to: 'ksi', label: '압력 · MPa ↔ ksi' },
+            { categoryId: 'length', from: 'mm', to: 'in', label: '길이 · mm ↔ in' },
+            { categoryId: 'mass', from: 'kg', to: 'lb', label: '질량 · kg ↔ lb' },
+            { categoryId: 'force', from: 'kN', to: 'kip', label: '힘 · kN ↔ kip' },
+            { categoryId: 'energy', from: 'J', to: 'ftlbf', label: '에너지 · J ↔ ft·lbf' }
+        ];
+
+        function isStoredPair(item) {
+            if (!item || typeof item !== 'object' || typeof item.label !== 'string') return false;
+            const cat = UNIT_CATEGORIES.find((entry) => entry.id === item.categoryId);
+            return !!(cat && cat.units.some((unit) => unit.id === item.from) && cat.units.some((unit) => unit.id === item.to));
+        }
+
         function loadStorage() {
             try {
                 const savedFavs = localStorage.getItem('eng_unit_favs_v1');
-                state.favorites = savedFavs ? JSON.parse(savedFavs) : [
-                    { categoryId: 'pressure', from: 'MPa', to: 'ksi', label: '압력 · MPa ↔ ksi' },
-                    { categoryId: 'length', from: 'mm', to: 'in', label: '길이 · mm ↔ in' },
-                    { categoryId: 'mass', from: 'kg', to: 'lb', label: '질량 · kg ↔ lb' },
-                    { categoryId: 'force', from: 'kN', to: 'kip', label: '힘 · kN ↔ kip' },
-                    { categoryId: 'energy', from: 'J', to: 'ftlbf', label: '에너지 · J ↔ ft·lbf' }
-                ];
+                if (savedFavs) {
+                    const parsed = JSON.parse(savedFavs);
+                    state.favorites = Array.isArray(parsed) ? parsed.filter(isStoredPair) : DEFAULT_FAVORITES.slice();
+                } else {
+                    state.favorites = DEFAULT_FAVORITES.slice();
+                }
                 const savedHist = localStorage.getItem('eng_unit_hist_v1');
-                if (savedHist) state.history = JSON.parse(savedHist);
+                if (savedHist) {
+                    const parsed = JSON.parse(savedHist);
+                    state.history = Array.isArray(parsed)
+                        ? parsed.filter((item) => item && typeof item.categoryName === 'string').slice(0, 20)
+                        : [];
+                }
 
                 const session = JSON.parse(localStorage.getItem('eng_unit_session_v1') || 'null');
-                if (session) {
+                if (session && typeof session === 'object') {
                     const cat = UNIT_CATEGORIES.find((item) => item.id === session.categoryId);
                     const unitsOk = cat && cat.units.some((unit) => unit.id === session.unitTop) && cat.units.some((unit) => unit.id === session.unitBottom);
                     if (unitsOk) {
@@ -961,6 +975,7 @@
                     if (['all', 'SI', 'US'].includes(session.overviewFilter)) state.overviewFilter = session.overviewFilter;
                 }
             } catch (e) {}
+            ensureSelection();
             updateFavBadge();
         }
 
@@ -983,33 +998,53 @@
             return UNIT_CATEGORIES.find((cat) => cat.id === state.categoryId) || UNIT_CATEGORIES[0];
         }
 
-        function getUnitObj(cat, unitId) {
-            return cat.units.find((unit) => unit.id === unitId) || cat.units[0];
+        function findUnit(cat, unitId) {
+            if (!cat || !Array.isArray(cat.units)) return null;
+            return cat.units.find((unit) => unit.id === unitId) || null;
+        }
+
+        function ensureSelection() {
+            let cat = UNIT_CATEGORIES.find((item) => item.id === state.categoryId);
+            if (!cat) {
+                cat = UNIT_CATEGORIES[0];
+                state.categoryId = cat.id;
+            }
+            if (!findUnit(cat, state.unitTop)) state.unitTop = cat.presets?.[0]?.from || cat.units[0].id;
+            if (!findUnit(cat, state.unitBottom)) state.unitBottom = cat.presets?.[0]?.to || cat.units[1]?.id || cat.units[0].id;
         }
 
         function convertValue(value, fromUnitId, toUnitId, category = getCurrentCategory()) {
-            const num = parseFloat(value);
-            if (isNaN(num)) return NaN;
+            const num = typeof value === 'number' ? value : parseFloat(String(value).replace(/,/g, ''));
+            if (!Number.isFinite(num)) return NaN;
+            const fromUnit = findUnit(category, fromUnitId);
+            const toUnit = findUnit(category, toUnitId);
+            if (!fromUnit || !toUnit) return NaN;
             if (fromUnitId === toUnitId) return num;
-            const fromUnit = getUnitObj(category, fromUnitId);
-            const toUnit = getUnitObj(category, toUnitId);
-            if (category.isNonLinear) return toUnit.fromBase(fromUnit.toBase(num));
+            if (category.isNonLinear) {
+                if (typeof fromUnit.toBase !== 'function' || typeof toUnit.fromBase !== 'function') return NaN;
+                return toUnit.fromBase(fromUnit.toBase(num));
+            }
+            if (!Number.isFinite(fromUnit.factor) || !Number.isFinite(toUnit.factor) || toUnit.factor === 0) return NaN;
             return (num * fromUnit.factor) / toUnit.factor;
         }
 
+        function formatGrouped(num, options) {
+            return num.toLocaleString('ko-KR', options);
+        }
+
         function formatNumber(num, mode = state.precision, forInput = false) {
-            if (num === null || num === undefined || isNaN(num)) return '';
+            if (num === null || num === undefined || !Number.isFinite(num)) return '';
             if (num === 0) return '0';
             const abs = Math.abs(num);
             if (mode === 'sci') return num.toExponential(4);
             if (typeof mode === 'number') {
                 const fixed = num.toFixed(mode);
-                return forInput ? fixed : Number(fixed).toLocaleString('en-US', {
+                return forInput ? fixed : formatGrouped(Number(fixed), {
                     minimumFractionDigits: mode,
                     maximumFractionDigits: mode
                 });
             }
-            if (abs >= 1e7 || (abs > 0 && abs < 1e-5)) return num.toExponential(4);
+            if (abs >= 1e7 || abs < 1e-5) return num.toExponential(4);
             let decimals = 4;
             if (abs >= 1000) decimals = 2;
             else if (abs >= 10) decimals = 3;
@@ -1018,7 +1053,48 @@
             else decimals = 6;
             const cleanNum = Number(num.toFixed(decimals));
             if (forInput) return String(cleanNum);
-            return cleanNum.toLocaleString('en-US', { maximumFractionDigits: decimals });
+            return formatGrouped(cleanNum, { maximumFractionDigits: decimals });
+        }
+
+        function normalizeNumericDraft(raw) {
+            const src = String(raw)
+                .replace(/[，,\s]/g, '')
+                .replace(/[．。﹒]/g, '.')
+                .replace(/[−–—－]/g, '-');
+            let out = '';
+            let seenDot = false;
+            let seenExp = false;
+            let seenDigit = false;
+            for (const ch of src) {
+                if (ch >= '0' && ch <= '9') {
+                    out += ch;
+                    seenDigit = true;
+                    continue;
+                }
+                if (ch === '-' && (out === '' || out.endsWith('e'))) {
+                    out += '-';
+                    continue;
+                }
+                if (ch === '+' && out.endsWith('e')) {
+                    out += '+';
+                    continue;
+                }
+                if (ch === '.' && !seenDot && !seenExp) {
+                    seenDot = true;
+                    out += '.';
+                    continue;
+                }
+                if ((ch === 'e' || ch === 'E') && !seenExp && seenDigit) {
+                    seenExp = true;
+                    seenDot = true;
+                    out += 'e';
+                }
+            }
+            return out;
+        }
+
+        function isCompleteNumber(raw) {
+            return /^-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(raw);
         }
 
         function renderCategories() {
@@ -1040,6 +1116,7 @@
         }
 
         function renderUnitSelects() {
+            ensureSelection();
             const cat = getCurrentCategory();
             const buildOptions = (selectedId) => ['SI', 'US'].map((sys) => {
                 const options = cat.units.filter((unit) => unit.sys === sys).map((unit) =>
@@ -1055,14 +1132,15 @@
 
         function updateSystemBadges() {
             const cat = getCurrentCategory();
-            const apply = (badgeId, symbolId, sys, symbol) => {
+            const apply = (badgeId, symbolId, unit) => {
+                if (!unit) return;
                 const badge = document.getElementById(badgeId);
-                badge.textContent = sys;
-                badge.className = sys === 'SI' ? 'sys si' : 'sys us';
-                document.getElementById(symbolId).textContent = symbol;
+                badge.textContent = unit.sys;
+                badge.className = unit.sys === 'SI' ? 'sys si' : 'sys us';
+                document.getElementById(symbolId).textContent = unit.symbol;
             };
-            apply('topSysBadge', 'topSymbol', getUnitObj(cat, state.unitTop).sys, getUnitObj(cat, state.unitTop).symbol);
-            apply('bottomSysBadge', 'bottomSymbol', getUnitObj(cat, state.unitBottom).sys, getUnitObj(cat, state.unitBottom).symbol);
+            apply('topSysBadge', 'topSymbol', findUnit(cat, state.unitTop));
+            apply('bottomSysBadge', 'bottomSymbol', findUnit(cat, state.unitBottom));
         }
 
         function updateInputRoles() {
@@ -1076,26 +1154,33 @@
         }
 
         function recalculate() {
+            ensureSelection();
             const cat = getCurrentCategory();
             const sourceIsTop = state.activeSide === 'top';
             const sourceRaw = (sourceIsTop ? state.rawValueTop : state.rawValueBottom).replace(/,/g, '');
             const targetInput = document.getElementById(sourceIsTop ? 'inputBottom' : 'inputTop');
-            const num = parseFloat(sourceRaw);
-            if (sourceRaw === '' || sourceRaw === '-' || isNaN(num)) {
+            const clearTarget = () => {
                 targetInput.value = '';
                 if (sourceIsTop) state.rawValueBottom = '';
                 else state.rawValueTop = '';
+            };
+            if (!isCompleteNumber(sourceRaw)) {
+                clearTarget();
             } else {
                 const converted = convertValue(
-                    num,
+                    sourceRaw,
                     sourceIsTop ? state.unitTop : state.unitBottom,
                     sourceIsTop ? state.unitBottom : state.unitTop,
                     cat
                 );
                 const raw = formatNumber(converted, state.precision, true);
-                if (sourceIsTop) state.rawValueBottom = raw;
-                else state.rawValueTop = raw;
-                targetInput.value = formatNumber(converted, state.precision, false);
+                if (!raw) {
+                    clearTarget();
+                } else {
+                    if (sourceIsTop) state.rawValueBottom = raw;
+                    else state.rawValueTop = raw;
+                    targetInput.value = raw;
+                }
             }
             updateInputRoles();
             updateFormulaBar();
@@ -1106,19 +1191,28 @@
 
         function updateFormulaBar() {
             const cat = getCurrentCategory();
-            const top = getUnitObj(cat, state.unitTop);
-            const bottom = getUnitObj(cat, state.unitBottom);
-            if (cat.isNonLinear) {
-                document.getElementById('formulaText').textContent =
-                    `0 ${top.symbol} = ${formatNumber(convertValue(0, state.unitTop, state.unitBottom, cat), 'auto')} ${bottom.symbol}`;
-                document.getElementById('reverseFormulaText').textContent =
-                    `100 ${top.symbol} = ${formatNumber(convertValue(100, state.unitTop, state.unitBottom, cat), 'auto')} ${bottom.symbol}`;
+            const top = findUnit(cat, state.unitTop);
+            const bottom = findUnit(cat, state.unitBottom);
+            const forward = document.getElementById('formulaText');
+            const reverse = document.getElementById('reverseFormulaText');
+            if (!top || !bottom) {
+                forward.textContent = '';
+                reverse.textContent = '';
                 return;
             }
-            document.getElementById('formulaText').textContent =
-                `1 ${top.symbol} = ${formatNumber(convertValue(1, state.unitTop, state.unitBottom, cat), 'auto')} ${bottom.symbol}`;
-            document.getElementById('reverseFormulaText').textContent =
-                `1 ${bottom.symbol} = ${formatNumber(convertValue(1, state.unitBottom, state.unitTop, cat), 'auto')} ${top.symbol}`;
+            const write = (el, amount, fromId, toId, left, right) => {
+                const value = convertValue(amount, fromId, toId, cat);
+                el.textContent = Number.isFinite(value)
+                    ? `${amount} ${left} = ${formatNumber(value, 'auto')} ${right}`
+                    : '';
+            };
+            if (cat.isNonLinear) {
+                write(forward, 0, top.id, bottom.id, top.symbol, bottom.symbol);
+                write(reverse, 100, top.id, bottom.id, top.symbol, bottom.symbol);
+                return;
+            }
+            write(forward, 1, top.id, bottom.id, top.symbol, bottom.symbol);
+            write(reverse, 1, bottom.id, top.id, bottom.symbol, top.symbol);
         }
 
         function renderAllUnitsOverview() {
@@ -1126,8 +1220,13 @@
             const baseUnitId = state.activeSide === 'top' ? state.unitTop : state.unitBottom;
             const raw = (state.activeSide === 'top' ? state.rawValueTop : state.rawValueBottom).replace(/,/g, '');
             const parsed = parseFloat(raw);
-            const baseVal = isNaN(parsed) ? 1 : parsed;
-            const baseUnit = getUnitObj(cat, baseUnitId);
+            const baseVal = Number.isFinite(parsed) ? parsed : 1;
+            const baseUnit = findUnit(cat, baseUnitId);
+            if (!baseUnit) {
+                document.getElementById('overviewBaseLabel').textContent = '';
+                document.getElementById('allUnitsList').innerHTML = '<p class="empty">표시할 단위가 없습니다.</p>';
+                return;
+            }
             document.getElementById('overviewBaseLabel').textContent = `${formatNumber(baseVal, 'auto')} ${baseUnit.symbol}`;
 
             const units = cat.units.filter((unit) => state.overviewFilter === 'all' || unit.sys === state.overviewFilter);
@@ -1137,7 +1236,9 @@
                 return;
             }
             list.innerHTML = units.map((unit) => {
-                const formatted = formatNumber(convertValue(baseVal, baseUnitId, unit.id, cat), state.precision, false);
+                const converted = convertValue(baseVal, baseUnitId, unit.id, cat);
+                const plain = formatNumber(converted, state.precision, true);
+                const formatted = formatNumber(converted, state.precision, false);
                 const current = unit.id === state.unitTop || unit.id === state.unitBottom;
                 return `
                     <div class="unit-row ${current ? 'is-current' : ''}">
@@ -1146,7 +1247,7 @@
                             <span class="unit-name"><b>${esc(unit.symbol)}</b><small>${esc(unit.name)}</small></span>
                         </button>
                         <span class="unit-val">${esc(formatted)}</span>
-                        <button type="button" class="icon-hit" data-copy="${esc(formatted)} ${esc(unit.symbol)}" aria-label="${esc(unit.symbol)} 값 복사">${ICON_COPY}</button>
+                        <button type="button" class="icon-hit" data-copy="${esc(plain)} ${esc(unit.symbol)}" aria-label="${esc(unit.symbol)} 값 복사">${ICON_COPY}</button>
                     </div>
                 `;
             }).join('');
@@ -1159,8 +1260,9 @@
         }
 
         function selectCategory(catId) {
-            state.categoryId = catId;
-            const cat = getCurrentCategory();
+            const cat = UNIT_CATEGORIES.find((item) => item.id === catId);
+            if (!cat) return;
+            state.categoryId = cat.id;
             state.unitTop = cat.presets?.[0]?.from || cat.units[0].id;
             state.unitBottom = cat.presets?.[0]?.to || cat.units[1]?.id || cat.units[0].id;
             state.activeSide = 'top';
@@ -1175,6 +1277,8 @@
         }
 
         function applyPreset(fromId, toId) {
+            const cat = getCurrentCategory();
+            if (!findUnit(cat, fromId) || !findUnit(cat, toId)) return;
             if (state.unitTop === fromId && state.unitBottom === toId) {
                 swapUnits();
                 return;
@@ -1187,11 +1291,20 @@
             saveStorage();
         }
 
-        function handleInput(side, value) {
-            const sanitized = value.replace(/[^0-9.\-eE]/g, '');
+        function handleInput(side, value, event) {
+            if (event && event.isComposing) return;
+            const input = document.getElementById(side === 'top' ? 'inputTop' : 'inputBottom');
+            const normalized = normalizeNumericDraft(value);
+            if (input.value !== normalized) {
+                const caret = input.selectionStart;
+                const atEnd = caret === value.length;
+                input.value = normalized;
+                const pos = atEnd ? normalized.length : Math.min(normalized.length, caret || 0);
+                input.setSelectionRange(pos, pos);
+            }
             state.activeSide = side;
-            if (side === 'top') state.rawValueTop = sanitized;
-            else state.rawValueBottom = sanitized;
+            if (side === 'top') state.rawValueTop = normalized;
+            else state.rawValueBottom = normalized;
             recalculate();
         }
 
@@ -1280,6 +1393,7 @@
         }
 
         function selectUnitFromOverview(unitId) {
+            if (!findUnit(getCurrentCategory(), unitId)) return;
             state.unitBottom = unitId;
             state.activeSide = 'top';
             renderUnitSelects();
@@ -1316,8 +1430,8 @@
         function copyValue(side) {
             const cat = getCurrentCategory();
             const value = document.getElementById(side === 'top' ? 'inputTop' : 'inputBottom').value;
-            const unit = getUnitObj(cat, side === 'top' ? state.unitTop : state.unitBottom);
-            if (!value) {
+            const unit = findUnit(cat, side === 'top' ? state.unitTop : state.unitBottom);
+            if (!value || !unit) {
                 showToast('복사할 값이 없습니다');
                 return;
             }
@@ -1338,9 +1452,11 @@
         }
 
         function toggleFavoritePair() {
+            ensureSelection();
             const cat = getCurrentCategory();
-            const top = getUnitObj(cat, state.unitTop);
-            const bottom = getUnitObj(cat, state.unitBottom);
+            const top = findUnit(cat, state.unitTop);
+            const bottom = findUnit(cat, state.unitBottom);
+            if (!top || !bottom) return;
             const index = state.favorites.findIndex((fav) => fav.categoryId === state.categoryId && fav.from === state.unitTop && fav.to === state.unitBottom);
             if (index >= 0) {
                 state.favorites.splice(index, 1);
@@ -1360,9 +1476,11 @@
         }
 
         function saveCurrentRecord() {
+            ensureSelection();
             const cat = getCurrentCategory();
-            const top = getUnitObj(cat, state.unitTop);
-            const bottom = getUnitObj(cat, state.unitBottom);
+            const top = findUnit(cat, state.unitTop);
+            const bottom = findUnit(cat, state.unitBottom);
+            if (!top || !bottom) return;
             state.history.unshift({
                 categoryId: state.categoryId,
                 categoryName: cat.name,
@@ -1433,7 +1551,10 @@
             }
             if (!load) return;
             const fav = state.favorites[Number(load.dataset.load)];
-            if (!fav) return;
+            if (!isStoredPair(fav)) {
+                showToast('저장된 단위를 찾을 수 없습니다');
+                return;
+            }
             state.categoryId = fav.categoryId;
             state.unitTop = fav.from;
             state.unitBottom = fav.to;
@@ -1507,10 +1628,16 @@
     <!-- 서비스 워커(오프라인 지원) 등록 스크립트 -->
     <script>
         if ('serviceWorker' in navigator) {
+            let hadController = !!navigator.serviceWorker.controller;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!hadController) {
+                    hadController = true;
+                    return;
+                }
+                window.location.reload();
+            });
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker 등록 성공:', reg.scope))
-                    .catch(err => console.log('Service Worker 등록 실패:', err));
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
     </script>
