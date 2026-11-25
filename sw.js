@@ -1,7 +1,7 @@
 // 화면 파일을 네트워크에서 먼저 받고, 오프라인일 때만 캐시를 씁니다.
 // 캐시 이름을 바꾸면 이전 캐시는 활성화될 때 지워집니다.
 
-const CACHE_NAME = 'unit-converter-v2';
+const CACHE_NAME = 'unit-converter-v3';
 
 const STATIC_ASSETS = [
     './',
